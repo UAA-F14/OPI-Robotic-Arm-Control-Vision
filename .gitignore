@@ -2,6 +2,12 @@ build/
 .vscode/
 *.o/
 
+# Python
+__pycache__/
+*.pyc
+venv/
+code/models/*.task
+
 
 # LaTeX build artifacts (scoped to docs/ so the LTspice .log in simulation/ stays tracked)
 docs/*.aux
