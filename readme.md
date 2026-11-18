@@ -1,45 +1,44 @@
 # OPI Robotic Arm Control Vision
 
-Control del brazo robotico EX2BrazoPS4 (Orange Pi 4 Pro) copiando en tiempo
-real el brazo derecho de una persona, usando el celular como camara y
-deteccion de postura/mano con MediaPipe. Sin guante, sin sensores, sin
-controles fisicos -- la camara ve el brazo y el robot lo copia.
+Real-time control of the EX2BrazoPS4 robotic arm (Orange Pi 4 Pro) by
+copying a person's right arm, using a phone as the camera and MediaPipe
+for pose/hand detection. No glove, no sensors, no physical controller --
+the camera watches the arm and the robot copies it.
 
-## Como funciona
+## How it works
 
-Un celular Android (app "IP Webcam") manda video por USB a la Orange Pi.
-Dos modelos chicos de MediaPipe corren en paralelo sobre cada frame:
+An Android phone (app "IP Webcam") streams video over USB to the Orange
+Pi. Two small MediaPipe models run in parallel on every frame:
 
-- `PoseLandmarker` (version lite) -- ubica cadera, hombro, codo y muneca.
-- `HandLandmarker` -- ubica los 21 puntos de la mano, para saber si esta
-  abierta o cerrada.
+- `PoseLandmarker` (lite) -- locates hip, shoulder, elbow and wrist.
+- `HandLandmarker` -- locates the 21 hand points, to tell if the hand is
+  open or closed.
 
-Con esos puntos se calculan 4 angulos, uno por cada servo del brazo:
+Those points are used to compute 4 angles, one per servo:
 
-| Articulacion real              | Como se calcula                          | Servo         |
-|---------------------------------|-------------------------------------------|---------------|
-| Hombro                          | angulo cadera-hombro-codo                  | Servo X       |
-| Codo                            | angulo hombro-codo-muneca                  | Servo Y       |
-| Giro de muneca                  | direccion muneca -> palma                  | Servo D-pad   |
-| Mano abierta/cerrada (pinza)    | distancia pulgar-indice (pellizco)         | Servo pinza   |
+| Real joint                     | How it's computed                          | Servo         |
+|---------------------------------|---------------------------------------------|---------------|
+| Shoulder                        | angle at hip-shoulder-elbow                  | Servo X       |
+| Elbow                           | angle at shoulder-elbow-wrist                | Servo Y       |
+| Wrist rotation                  | wrist -> palm direction                      | Servo D-pad   |
+| Open/closed hand (gripper)      | thumb-index distance (pinch)                 | Servo gripper |
 
-El sistema detecta automaticamente cual de los dos brazos (izquierdo o
-derecho) esta viendo mejor la camara, y usa ese. El resultado se puede ver
-en vivo desde cualquier navegador en la misma red, sin necesitar cable ni
-monitor conectado a la Orange.
+The system automatically picks whichever arm (left or right) the camera
+is seeing best. The result can be watched live from any browser on the
+same network, no monitor or cable needed on the Orange Pi itself.
 
 ## Hardware
 
-- Orange Pi 4 Pro (RK3588) -- corre la deteccion y mueve los servos via
-  PWM por sysfs (`/sys/class/pwm/pwmchip0`), igual que el control original
-  por control de PS4 de este mismo brazo.
-- Brazo EX2BrazoPS4, 4 servos (hombro, codo, muneca, pinza).
-- Celular Android con la app **IP Webcam**, conectado por cable USB a la
-  Orange Pi (mas rapido y estable que por wifi).
-- El RK3588 calienta bastante corriendo los modelos sin parar -- se
-  recomienda disipador (aunque sea uno chico con pasta termica).
+- Orange Pi 4 Pro (RK3588) -- runs detection and drives the servos via
+  sysfs PWM (`/sys/class/pwm/pwmchip0`), same as the original PS4
+  controller version of this arm.
+- EX2BrazoPS4 arm, 4 servos (shoulder, elbow, wrist, gripper).
+- Android phone running the **IP Webcam** app, connected to the Orange Pi
+  with a USB cable (faster and more stable than wifi).
+- The RK3588 gets quite hot running the models non-stop -- a heatsink
+  (even a small one, with thermal paste) is recommended.
 
-## Instalacion
+## Setup
 
 ```bash
 cd code
@@ -48,8 +47,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Descargar los dos modelos de MediaPipe (no se incluyen en el repo por
-tamano):
+Download the two MediaPipe models (not included in the repo due to size):
 
 ```bash
 mkdir -p models
@@ -59,49 +57,49 @@ curl -o models/hand_landmarker.task \
   https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task
 ```
 
-## Conectar la camara por USB
+## Connecting the camera over USB
 
-1. Celular conectado a la Orange Pi con cable USB, con **Depuracion USB**
-   activada (Ajustes -> Opciones de desarrollador) y autorizada.
-2. Abrir **IP Webcam** en el celular y darle "Start server".
-3. En la Orange Pi:
+1. Connect the phone to the Orange Pi with a USB cable, with **USB
+   debugging** enabled (Settings -> Developer options) and authorized.
+2. Open **IP Webcam** on the phone and tap "Start server".
+3. On the Orange Pi:
 
 ```bash
 sudo apt install android-tools-adb
 sudo adb forward tcp:8080 tcp:8080
 ```
 
-Con esto el stream de la camara se puede leer desde `http://127.0.0.1:8080/video`
-dentro de la propia Orange, sin pasar por wifi.
+This makes the camera stream readable from `http://127.0.0.1:8080/video`
+directly on the Orange Pi, without going through wifi.
 
-## Correr el control del brazo
+## Running the arm control
 
-El script necesita permisos de root para escribir los canales PWM:
+The script needs root to write the PWM channels:
 
 ```bash
 sudo venv/bin/python code/hand_arm_control.py http://127.0.0.1:8080/video
 ```
 
-Al arrancar imprime la direccion de la vista en vivo, algo como:
+On startup it prints the live view address, something like:
 
 ```
-Vista en vivo en http://<ip-de-la-orange>:5000/
+Live view at http://<orange-pi-ip>:5000/
 ```
 
-Esa pagina muestra el video con el esqueleto del brazo/mano dibujado
-encima y los 4 angulos en tiempo real -- util para calibrar y para la
-demo, sin necesitar pantalla conectada a la Orange.
+That page shows the video with the arm/hand skeleton drawn on top and
+the 4 live angles -- useful for calibration and for the demo, with no
+screen attached to the Orange Pi.
 
-Parate de forma que la camara te vea desde la cadera hasta la mano -- si
-no ve la cadera no puede calcular el angulo del hombro.
+Stand so the camera sees you from your hip to your hand -- without the
+hip in frame, the shoulder angle can't be computed.
 
-## Notas de rendimiento
+## Performance notes
 
-- La deteccion de cuerpo y mano corre en paralelo (dos hilos), no una
-  despues de la otra.
-- El loop esta topado a 10 FPS a proposito -- es mas que suficiente para
-  que el brazo se vea fluido, y evita tener el CPU al 100% todo el
-  tiempo (menos calor).
-- Si el RK3588 esta sin disipador, el sistema de proteccion termica del
-  kernel le baja la frecuencia solo para no sobrecalentarse -- con un
-  disipador, aunque sea chico, corre notablemente mas rapido.
+- Body and hand detection run in parallel (two threads), not one after
+  the other.
+- The main loop is capped at 10 FPS on purpose -- that's more than
+  enough for the arm to look smooth, and keeps the CPU from running at
+  100% all the time (less heat).
+- Without a heatsink, the RK3588's thermal protection quietly throttles
+  the clock speed to avoid overheating -- even a small heatsink makes it
+  run noticeably faster.
