@@ -103,3 +103,12 @@ hip in frame, the shoulder angle can't be computed.
 - Without a heatsink, the RK3588's thermal protection quietly throttles
   the clock speed to avoid overheating -- even a small heatsink makes it
   run noticeably faster.
+
+## References
+
+- [MediaPipe Pose Landmarker](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker) -- docs for the body pose model.
+- [MediaPipe Hand Landmarker](https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker) -- docs for the hand model.
+- [MediaPipe model index](https://storage.googleapis.com/mediapipe-models) -- where `.task` model files are hosted.
+- [IP Webcam (Android app)](https://play.google.com/store/apps/details?id=com.pas.webcam) -- turns the phone into a camera server.
+- [Android Debug Bridge (adb)](https://developer.android.com/tools/adb) -- used for `adb forward` over USB.
+- [Linux PWM sysfs interface](https://www.kernel.org/doc/html/latest/driver-api/pwm.html) -- how `pwm_servo.py` talks to the servos.
