@@ -92,7 +92,7 @@ def main():
     # uno para empezar el otro (antes salian uno tras otro en el mismo hilo).
     executor = ThreadPoolExecutor(max_workers=2)
 
-    angle_shoulder, angle_elbow, angle_wrist, angle_grip = 90.0, 90.0, 90.0, 90.0
+    angle_shoulder, angle_elbow, angle_base, angle_grip = 90.0, 90.0, 90.0, 90.0
     grabber = None
     start_ms = time.monotonic() * 1000
     fps_count, fps_t0 = 0, time.monotonic()
@@ -153,8 +153,8 @@ def main():
                         0.0,
                         180.0,
                     )
-                    angle_wrist += (base_target - angle_wrist) * SMOOTHING
-                    servo_dpad.set_angle(angle_wrist)
+                    angle_base += (base_target - angle_base) * SMOOTHING
+                    servo_dpad.set_angle(angle_base)
 
                 if hand:
                     draw_hand_skeleton(frame, hand)
@@ -172,7 +172,7 @@ def main():
             line_h = int(30 * font_scale)
             for i, line in enumerate((
                 f"HOMBRO={angle_shoulder:5.1f} CODO={angle_elbow:5.1f} BRAZO={arm_label}",
-                f"MUNECA={angle_wrist:5.1f} PINZA={angle_grip:5.1f} MANO={hand_label}",
+                f"BASE={angle_base:5.1f} PINZA={angle_grip:5.1f} MANO={hand_label}",
             )):
                 cv2.putText(
                     frame, line, (10, line_h * (i + 1)),
