@@ -46,9 +46,9 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 POSE_MODEL_PATH = os.path.join(PROJECT_DIR, "models", "pose_landmarker_lite.task")
 HAND_MODEL_PATH = os.path.join(PROJECT_DIR, "models", "hand_landmarker.task")
 
-# Rango de giro de muneca (grados, direccion muneca->palma en el plano
-# de la imagen) que se mapea a 0..180 del servo. Ajustar a ojo viendo
-# los valores que se ven en la pagina web.
+# Rango de giro del torso (grados, shoulder_rotation_deg en geometry.py)
+# que se mapea a 0..180 del servo de la base. Ajustar a ojo viendo los
+# valores que se ven en la pagina web.
 BASE_ROT_MIN, BASE_ROT_MAX = -90.0, 90.0
 
 # Suavizado exponencial: entre mas chico, mas suave pero mas lento.
