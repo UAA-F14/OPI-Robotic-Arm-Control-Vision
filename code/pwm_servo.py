@@ -1,6 +1,7 @@
 """Control de un servo por PWM via sysfs (/sys/class/pwm/pwmchip0/...),
 igual que pwm.c del proyecto original pero reescrito en Python -- asi no
-hay que compilar ni enlazar nada de C. Hay que correr con sudo."""
+hay que compilar ni enlazar nada de C. Hay que correr con sudo (export,
+period y duty_cycle de pwmchip0 son de root)."""
 import os
 import time
 
