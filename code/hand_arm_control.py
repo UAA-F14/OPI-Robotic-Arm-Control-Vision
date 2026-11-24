@@ -8,10 +8,11 @@ Holistic siempre calcula tambien la cara (nunca la usamos) y en el CPU de
 la Orange eso sobraba y hacia todo lento.
 
 Mapeo 1:1, facil de explicar en la expo -- cada servo copia una
-articulacion real de tu brazo:
+articulacion real de tu brazo (el brazo no tiene muneca, tiene base --
+confirmado moviendo cada canal PWM a mano, ver pwm_servo.py):
   - Angulo del HOMBRO  (cadera-hombro-codo)            -> servo X
   - Angulo del CODO    (hombro-codo-muneca)             -> servo Y
-  - Giro de la MUNECA  (direccion muneca -> palma)      -> servo D-pad
+  - Giro del TORSO/HOMBROS (de lado)                    -> servo D-pad (base)
   - Pellizco pulgar-indice (abrir/cerrar la mano)       -> servo de la pinza
 
 Parate de forma que la camara del celular te vea desde la cadera hasta
