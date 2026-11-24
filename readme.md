@@ -100,6 +100,19 @@ screen attached to the Orange Pi.
 Stand so the camera sees you from your hip to your hand -- without the
 hip in frame, the shoulder angle can't be computed.
 
+### Calibration
+
+Two things in `code/geometry.py` were tuned by hand against real
+camera readings, not guessed, and may need re-tuning for a different
+phone/lighting/distance:
+
+- `PINCH_CLOSED` / `PINCH_OPEN` -- the normalized thumb-to-index
+  distance (relative to the hand's own size) that counts as a fully
+  closed or fully open hand. Too narrow a gap makes the gripper twitchy
+  between the two extremes; too wide and it never reaches either one.
+- `BASE_ROT_MIN` / `BASE_ROT_MAX` (in `code/hand_arm_control.py`) --
+  the torso-rotation angle range mapped to the base servo's 0-180.
+
 ## Troubleshooting
 
 - **`adb devices` shows the phone but with "no permissions"** -- run
