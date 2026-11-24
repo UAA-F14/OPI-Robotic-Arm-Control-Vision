@@ -100,6 +100,21 @@ screen attached to the Orange Pi.
 Stand so the camera sees you from your hip to your hand -- without the
 hip in frame, the shoulder angle can't be computed.
 
+## Troubleshooting
+
+- **`adb devices` shows the phone but with "no permissions"** -- run
+  `adb` as root instead (`sudo adb kill-server && sudo adb devices -l
+  && sudo adb forward tcp:8080 tcp:8080`). The Orange Pi's udev rules
+  don't grant the regular user access to this specific phone's USB
+  vendor/product ID.
+- **Phone shows a second USB-debugging authorization popup** -- normal
+  the first time `adb` runs as root, since root is a different "host"
+  than the one you already authorized as a regular user. Accept it too.
+- **Camera stream times out (`http://127.0.0.1:8080/video` doesn't
+  respond)** -- make sure "IP Webcam" is open and its server was
+  started (tap "Start server" in the app), and that the `adb forward`
+  above is still active -- it drops if `adb` restarts.
+
 ## Performance notes
 
 - Body and hand detection run in parallel (two threads), not one after
