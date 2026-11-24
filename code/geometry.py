@@ -68,6 +68,9 @@ def shoulder_rotation_deg(pose):
 
 
 def hand_size(hand_landmarks):
+    """Distancia muneca (0) a nudillo del dedo medio (9) -- una medida
+    estable del "tamaño" de la mano en la imagen, para normalizar otras
+    distancias (ver pinch_ratio) sin que importe que tan cerca este."""
     wrist = hand_landmarks[0]
     middle_mcp = hand_landmarks[9]
     return math.hypot(wrist.x - middle_mcp.x, wrist.y - middle_mcp.y)
