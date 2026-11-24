@@ -20,7 +20,12 @@ def clamp(v, lo, hi):
 
 def pick_arm(pose):
     """Regresa (cadera, hombro, codo, muneca, etiqueta) del brazo -- izquierdo
-    o derecho -- que la camara este viendo mejor en este frame."""
+    o derecho -- que la camara este viendo mejor en este frame.
+
+    "Mejor visto" = suma de los 4 valores de visibility (0..1, que tan
+    seguro esta MediaPipe de ese punto) de ese lado. Se recalcula cada
+    frame, asi que si te das la vuelta a medias, puede cambiar de brazo
+    solo -- es intencional, no un bug."""
     def visibility(hip, shoulder, elbow, wrist):
         return sum((pose[i].visibility or 0.0) for i in (hip, shoulder, elbow, wrist))
 
