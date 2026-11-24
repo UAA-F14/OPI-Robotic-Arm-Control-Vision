@@ -20,8 +20,15 @@ Those points are used to compute 4 angles, one per servo:
 |---------------------------------|---------------------------------------------|---------------|
 | Shoulder                        | angle at hip-shoulder-elbow                  | Servo X       |
 | Elbow                           | angle at shoulder-elbow-wrist                | Servo Y       |
-| Wrist rotation                  | wrist -> palm direction                      | Servo D-pad   |
-| Open/closed hand (gripper)      | thumb-index distance (pinch)                 | Servo gripper |
+| Base rotation                   | torso/shoulder-line rotation                 | Servo D-pad   |
+| Open/closed hand (gripper)      | thumb-index distance (pinch), sent binary     | Servo gripper |
+
+The arm doesn't have a wrist joint -- it has a base rotation instead,
+confirmed by moving each PWM channel by hand. The gripper servo is a
+360-degree continuous-rotation type (the pulse sets speed/direction, not
+a fixed position), so its signal is sent as a binary full-speed command
+in one direction or the other instead of a smoothed intermediate angle --
+it's expected to stall safely against its own mechanical limit.
 
 The system automatically picks whichever arm (left or right) the camera
 is seeing best. The result can be watched live from any browser on the

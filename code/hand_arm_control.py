@@ -34,12 +34,13 @@ import mediapipe as mp
 from mediapipe.tasks.python import vision
 from mediapipe.tasks.python.core.base_options import BaseOptions
 
-from geometry import clamp, joint_angle_deg, wrist_turn_deg, pinch_ratio, pick_arm
+from geometry import clamp, joint_angle_deg, shoulder_rotation_deg, pinch_ratio, pick_arm
 from drawing import draw_arm_skeleton, draw_hand_skeleton
 from pwm_servo import Servo, SERVO_X_CHANNEL, SERVO_Y_CHANNEL, SERVO_GRIP_CHANNEL, SERVO_DPAD_CHANNEL
 from web_preview import start_preview_server, publish_preview_frame, FrameGrabber, HTTP_PORT
 
-STREAM_URL = sys.argv[1] if len(sys.argv) > 1 else "http://192.168.1.50:8080/video"
+_source_arg = sys.argv[1] if len(sys.argv) > 1 else "0"
+STREAM_URL = int(_source_arg) if _source_arg.isdigit() else _source_arg
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 POSE_MODEL_PATH = os.path.join(PROJECT_DIR, "models", "pose_landmarker_lite.task")
 HAND_MODEL_PATH = os.path.join(PROJECT_DIR, "models", "hand_landmarker.task")
@@ -47,7 +48,7 @@ HAND_MODEL_PATH = os.path.join(PROJECT_DIR, "models", "hand_landmarker.task")
 # Rango de giro de muneca (grados, direccion muneca->palma en el plano
 # de la imagen) que se mapea a 0..180 del servo. Ajustar a ojo viendo
 # los valores que se ven en la pagina web.
-WRIST_DEG_MIN, WRIST_DEG_MAX = -90.0, 90.0
+BASE_ROT_MIN, BASE_ROT_MAX = -90.0, 90.0
 
 # Suavizado exponencial: entre mas chico, mas suave pero mas lento.
 SMOOTHING = 0.3
@@ -139,26 +140,29 @@ def main():
                 elbow_target = joint_angle_deg(shoulder, elbow, wrist)
                 if shoulder_target is not None:
                     angle_shoulder += (shoulder_target - angle_shoulder) * SMOOTHING
-                    servo_x.set_angle(angle_shoulder)
+                    servo_x.set_angle(180.0 - angle_shoulder)  # servo instalado al reves
                 if elbow_target is not None:
                     angle_elbow += (elbow_target - angle_elbow) * SMOOTHING
-                    servo_y.set_angle(angle_elbow)
+                    servo_y.set_angle(180.0 - angle_elbow)  # servo instalado al reves
+
+                base_deg = shoulder_rotation_deg(pose)
+                if base_deg is not None:
+                    base_target = clamp(
+                        (base_deg - BASE_ROT_MIN) / (BASE_ROT_MAX - BASE_ROT_MIN) * 180.0,
+                        0.0,
+                        180.0,
+                    )
+                    angle_wrist += (base_target - angle_wrist) * SMOOTHING
+                    servo_dpad.set_angle(angle_wrist)
 
                 if hand:
                     draw_hand_skeleton(frame, hand)
 
-                    wrist_deg = wrist_turn_deg(wrist, hand[9])
-                    if wrist_deg is not None:
-                        wrist_target = clamp(
-                            (wrist_deg - WRIST_DEG_MIN) / (WRIST_DEG_MAX - WRIST_DEG_MIN) * 180.0,
-                            0.0,
-                            180.0,
-                        )
-                        angle_wrist += (wrist_target - angle_wrist) * SMOOTHING
-                        servo_dpad.set_angle(angle_wrist)
-
-                    grip_target = (1.0 - pinch_ratio(hand)) * 180.0  # pellizcado = cerrada
-                    angle_grip += (grip_target - angle_grip) * SMOOTHING
+                    # Servo de 360 (rotacion continua): el pulso es velocidad/direccion,
+                    # no una posicion -- mandar un valor intermedio casi no lo mueve.
+                    # Por eso se manda binario, a fondo hacia un lado u otro, hasta que
+                    # se trabe sola (normal y seguro en este tipo de servo).
+                    angle_grip = 0.0 if pinch_ratio(hand) < 0.5 else 180.0
                     servo_grip.set_angle(angle_grip)
 
             # tamano de letra proporcional al ancho del frame, para que

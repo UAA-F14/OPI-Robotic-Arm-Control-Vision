@@ -10,11 +10,14 @@ PWM_CHIP = "/sys/class/pwm/pwmchip0"
 SERVO_PERIOD_NS = 20_000_000  # 20 ms -> 50 Hz
 ANGLE_MIN, ANGLE_MAX = 0.0, 180.0
 
-# Canales de cada servo en el brazo EX2BrazoPS4.
-SERVO_X_CHANNEL = 0     # hombro
-SERVO_Y_CHANNEL = 3     # codo
-SERVO_GRIP_CHANNEL = 2  # pinza
-SERVO_DPAD_CHANNEL = 4  # muneca
+# Canales de cada servo en el brazo EX2BrazoPS4 -- confirmados a mano
+# moviendo cada canal por separado (el brazo no tiene muneca como eje
+# fisico, tiene base; la señal de giro de muneca de la camara se manda
+# ahi en su lugar).
+SERVO_X_CHANNEL = 2     # hombro (sube/baja)
+SERVO_Y_CHANNEL = 4     # codo
+SERVO_GRIP_CHANNEL = 3  # pinza
+SERVO_DPAD_CHANNEL = 0  # base (recibe la señal de giro de muneca)
 
 
 def angle_to_duty_ns(angle_deg):

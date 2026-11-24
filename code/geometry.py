@@ -10,8 +10,8 @@ LEFT_HIP, LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST = 23, 11, 13, 15
 # Que tan pellizcados/abiertos tienen que estar los dedos para
 # considerar la pinza totalmente cerrada/abierta. Ajustar a ojo viendo
 # el valor de PINZA en la vista en vivo.
-PINCH_CLOSED = 0.05
-PINCH_OPEN = 0.35
+PINCH_CLOSED = 0.75
+PINCH_OPEN = 0.9
 
 
 def clamp(v, lo, hi):
@@ -42,6 +42,19 @@ def joint_angle_deg(a, b, c):
         return None
     cos_angle = clamp((v1x * v2x + v1y * v2y) / (mag1 * mag2), -1.0, 1.0)
     return math.degrees(math.acos(cos_angle))
+
+
+def shoulder_rotation_deg(pose):
+    """Que tan girado (de lado) esta el torso, usando los dos hombros
+    (11 y 12) y su profundidad (z) -- gira el torso hacia un lado y
+    cambia, independiente de cual brazo este siguiendo pick_arm()."""
+    left = pose[LEFT_SHOULDER]
+    right = pose[RIGHT_SHOULDER]
+    dx = right.x - left.x
+    dz = right.z - left.z
+    if math.hypot(dx, dz) < 1e-6:
+        return None
+    return math.degrees(math.atan2(dz, dx))
 
 
 def wrist_turn_deg(wrist, palm_center):
