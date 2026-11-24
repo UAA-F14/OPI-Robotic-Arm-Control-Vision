@@ -14,6 +14,8 @@ HAND_CONNECTIONS = [
 
 
 def draw_point(frame, landmark, color=(0, 255, 0), radius=5):
+    """landmark.x/.y vienen normalizados 0..1 de MediaPipe -- hay que
+    escalarlos al tamaño real del frame antes de dibujar."""
     h, w = frame.shape[:2]
     cv2.circle(frame, (int(landmark.x * w), int(landmark.y * h)), radius, color, -1)
 
