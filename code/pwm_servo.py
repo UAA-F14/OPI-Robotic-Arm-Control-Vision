@@ -10,6 +10,16 @@ PWM_CHIP = "/sys/class/pwm/pwmchip0"
 SERVO_PERIOD_NS = 20_000_000  # 20 ms -> 50 Hz
 ANGLE_MIN, ANGLE_MAX = 0.0, 180.0
 
+# Tabla de pines fisicos, igual que en el proyecto original de C (pwm.h):
+#   Canal   Pin fisico   Overlay
+#   0       29           pwm0
+#   2       33           pwm2
+#   3       35           pwm3
+#   4       37           pwm4
+# Hay que tener activados los overlays correspondientes en
+# /boot/orangepiEnv.txt (overlays=pwm0 pwm2 pwm3 pwm4) o pwm_open()
+# falla para ese canal.
+
 # Canales de cada servo en el brazo EX2BrazoPS4 -- confirmados a mano
 # moviendo cada canal por separado (el brazo no tiene muneca como eje
 # fisico, tiene base; la señal de giro de muneca de la camara se manda
