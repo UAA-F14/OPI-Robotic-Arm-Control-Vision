@@ -52,7 +52,12 @@ def joint_angle_deg(a, b, c):
 def shoulder_rotation_deg(pose):
     """Que tan girado (de lado) esta el torso, usando los dos hombros
     (11 y 12) y su profundidad (z) -- gira el torso hacia un lado y
-    cambia, independiente de cual brazo este siguiendo pick_arm()."""
+    cambia, independiente de cual brazo este siguiendo pick_arm().
+
+    De frente a la camara, los dos hombros tienen casi la misma z
+    (misma distancia a la camara) y dx es el ancho de hombros. Al girar
+    el torso, un hombro se acerca y el otro se aleja -- eso cambia dz,
+    y por tanto el angulo atan2(dz, dx)."""
     left = pose[LEFT_SHOULDER]
     right = pose[RIGHT_SHOULDER]
     dx = right.x - left.x
