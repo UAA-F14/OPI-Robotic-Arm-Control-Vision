@@ -139,6 +139,14 @@ phone/lighting/distance:
   the clock speed to avoid overheating -- even a small heatsink makes it
   run noticeably faster.
 
+## Team
+
+- Camera & connectivity: Rafael De Luna
+- Pose detection & math: DasReyxr
+- Servos & hardware: Kevin Lara
+- Visualization & integration: IKGB105
+- Documentation: Janna
+
 ## References
 
 - [MediaPipe Pose Landmarker](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker) -- docs for the body pose model.
