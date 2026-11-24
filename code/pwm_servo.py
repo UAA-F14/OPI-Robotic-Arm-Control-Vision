@@ -40,6 +40,9 @@ GRIP_IS_CONTINUOUS_ROTATION = True
 
 
 def angle_to_duty_ns(angle_deg):
+    """0 grados -> pulso de 1ms, 180 grados -> pulso de 2ms (estandar de
+    servo de hobby). duty_cycle en sysfs es el tiempo que la señal esta
+    ABAJO dentro del periodo, por eso se regresa period - pulso."""
     angle_deg = clamp(angle_deg, ANGLE_MIN, ANGLE_MAX)
     pulse_ns = 1_000_000 + int(angle_deg / 180.0 * 1_000_000)  # 1ms..2ms
     return SERVO_PERIOD_NS - pulse_ns
