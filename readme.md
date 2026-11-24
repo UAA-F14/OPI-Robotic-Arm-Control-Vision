@@ -31,8 +31,10 @@ in one direction or the other instead of a smoothed intermediate angle --
 it's expected to stall safely against its own mechanical limit.
 
 The system automatically picks whichever arm (left or right) the camera
-is seeing best. The result can be watched live from any browser on the
-same network, no monitor or cable needed on the Orange Pi itself.
+is seeing best (whichever side has more visible landmarks), so you
+don't have to tell it which arm you're using. The result can be
+watched live from any browser on the same network, no monitor or cable
+needed on the Orange Pi itself.
 
 ## Hardware
 
