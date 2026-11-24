@@ -39,7 +39,7 @@ same network, no monitor or cable needed on the Orange Pi itself.
 - Orange Pi 4 Pro (RK3588) -- runs detection and drives the servos via
   sysfs PWM (`/sys/class/pwm/pwmchip0`), same as the original PS4
   controller version of this arm.
-- EX2BrazoPS4 arm, 4 servos (shoulder, elbow, wrist, gripper).
+- EX2BrazoPS4 arm, 4 servos (shoulder, elbow, base rotation, gripper).
 - Android phone running the **IP Webcam** app, connected to the Orange Pi
   with a USB cable (faster and more stable than wifi).
 - The RK3588 gets quite hot running the models non-stop -- a heatsink
