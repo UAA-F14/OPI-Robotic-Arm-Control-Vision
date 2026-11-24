@@ -57,15 +57,6 @@ def shoulder_rotation_deg(pose):
     return math.degrees(math.atan2(dz, dx))
 
 
-def wrist_turn_deg(wrist, palm_center):
-    """Direccion muneca->palma en el plano de la imagen, en grados."""
-    dx = palm_center.x - wrist.x
-    dy = palm_center.y - wrist.y
-    if math.hypot(dx, dy) < 1e-6:
-        return None
-    return math.degrees(math.atan2(-dy, dx))
-
-
 def hand_size(hand_landmarks):
     wrist = hand_landmarks[0]
     middle_mcp = hand_landmarks[9]
