@@ -26,8 +26,16 @@ ANGLE_MIN, ANGLE_MAX = 0.0, 180.0
 # ahi en su lugar).
 SERVO_X_CHANNEL = 2     # hombro (sube/baja)
 SERVO_Y_CHANNEL = 4     # codo
-SERVO_GRIP_CHANNEL = 3  # pinza
+SERVO_GRIP_CHANNEL = 3  # pinza -- servo de rotacion continua (360), ver nota abajo
 SERVO_DPAD_CHANNEL = 0  # base (recibe la señal de giro de muneca)
+
+# El servo de la pinza es de rotacion continua (360 grados): el pulso
+# controla velocidad y direccion de giro, no una posicion fija como los
+# otros tres. Un valor intermedio casi no lo mueve -- hay que mandarlo
+# a fondo hacia un lado u otro y dejar que se trabe solo contra su
+# propio limite mecanico (es seguro, asi esta pensado este tipo de
+# servo para una pinza).
+GRIP_IS_CONTINUOUS_ROTATION = True
 
 
 def angle_to_duty_ns(angle_deg):
