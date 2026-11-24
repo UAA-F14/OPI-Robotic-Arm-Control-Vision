@@ -34,9 +34,12 @@ def draw_arm_skeleton(frame, hip, shoulder, elbow, wrist):
 
 
 def draw_hand_skeleton(frame, hand_landmarks):
+    """Dibuja los 21 puntos de la mano y sus conexiones, mas una linea
+    amarilla pulgar-indice aparte -- esa es la que de verdad mueve la
+    pinza (ver pinch_ratio en geometry.py), por eso se resalta distinto
+    al resto del esqueleto."""
     for a, b in HAND_CONNECTIONS:
         draw_line(frame, hand_landmarks[a], hand_landmarks[b])
     for point in hand_landmarks:
         draw_point(frame, point, radius=3)
-    # linea amarilla pulgar-indice: asi se ve directo el pellizco que mueve la pinza
     draw_line(frame, hand_landmarks[4], hand_landmarks[8], color=(0, 255, 255), thickness=2)
