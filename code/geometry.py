@@ -74,6 +74,9 @@ def hand_size(hand_landmarks):
 
 
 def pinch_ratio(hand_landmarks):
+    """0.0 = mano cerrada (pulgar e indice juntos), 1.0 = mano abierta.
+    Se normaliza por el tamaño de la mano (hand_size) para que no
+    importe que tan cerca o lejos este de la camara."""
     thumb_tip, index_tip = hand_landmarks[4], hand_landmarks[8]
     raw = math.hypot(thumb_tip.x - index_tip.x, thumb_tip.y - index_tip.y)
     normalized = raw / max(hand_size(hand_landmarks), 1e-6)
