@@ -13,9 +13,11 @@ LEFT_HIP, LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST = 23, 11, 13, 15
 PINCH_CLOSED = 0.75
 PINCH_OPEN = 0.9
 
-
-def clamp(v, lo, hi):
-    return max(lo, min(hi, v))
+def clamp(val, lowval, highval):
+    '''
+    Regresa un valor v limitado al rango [lowval, highval].
+    '''
+    return max(lowval, min(highval, val))
 
 
 def pick_arm(pose):
@@ -29,8 +31,7 @@ def pick_arm(pose):
     def visibility(hip, shoulder, elbow, wrist):
         return sum((pose[i].visibility or 0.0) for i in (hip, shoulder, elbow, wrist))
 
-    if visibility(RIGHT_HIP, RIGHT_SHOULDER, RIGHT_ELBOW, RIGHT_WRIST) >= \
-            visibility(LEFT_HIP, LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST):
+    if visibility(RIGHT_HIP, RIGHT_SHOULDER, RIGHT_ELBOW, RIGHT_WRIST) >= visibility(LEFT_HIP, LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST):
         hip, shoulder, elbow, wrist, label = RIGHT_HIP, RIGHT_SHOULDER, RIGHT_ELBOW, RIGHT_WRIST, "DER"
     else:
         hip, shoulder, elbow, wrist, label = LEFT_HIP, LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST, "IZQ"
