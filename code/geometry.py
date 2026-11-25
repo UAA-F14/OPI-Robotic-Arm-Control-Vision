@@ -47,6 +47,7 @@ def joint_angle_deg(a, b, c):
     v2x, v2y = c.x - b.x, c.y - b.y
     mag1 = math.hypot(v1x, v1y) # Magnitud del vector v1
     mag2 = math.hypot(v2x, v2y) # Magnitud del vector v2
+    # Si alguno de los vectores es demasiado pequeño, el angulo no esta definido
     if mag1 < 1e-6 or mag2 < 1e-6:
         return None
     cos_angle = clamp((v1x * v2x + v1y * v2y) / (mag1 * mag2), -1.0, 1.0)
@@ -58,10 +59,9 @@ def shoulder_rotation_deg(pose):
     (11 y 12) y su profundidad (z) -- gira el torso hacia un lado y
     cambia, independiente de cual brazo este siguiendo pick_arm().
 
-    De frente a la camara, los dos hombros tienen casi la misma z
-    (misma distancia a la camara) y dx es el ancho de hombros. Al girar
-    el torso, un hombro se acerca y el otro se aleja -- eso cambia dz,
+    dx es el ancho de hombros. Al girar el torso, un hombro se acerca y el otro se aleja -- eso cambia dz,
     y por tanto el angulo atan2(dz, dx)."""
+    # MediaPipe Pose da un valor de z para cada punto, que indica la distancia
     left = pose[LEFT_SHOULDER]
     right = pose[RIGHT_SHOULDER]
     dx = right.x - left.x
