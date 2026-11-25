@@ -31,6 +31,7 @@ def pick_arm(pose):
     def visibility(hip, shoulder, elbow, wrist):
         return sum((pose[i].visibility or 0.0) for i in (hip, shoulder, elbow, wrist))
 
+    # MediaPipe Pose da un valor de visibility (0..1) para cada punto, que indica
     if visibility(RIGHT_HIP, RIGHT_SHOULDER, RIGHT_ELBOW, RIGHT_WRIST) >= visibility(LEFT_HIP, LEFT_SHOULDER, LEFT_ELBOW, LEFT_WRIST):
         hip, shoulder, elbow, wrist, label = RIGHT_HIP, RIGHT_SHOULDER, RIGHT_ELBOW, RIGHT_WRIST, "DER"
     else:
@@ -39,11 +40,13 @@ def pick_arm(pose):
 
 
 def joint_angle_deg(a, b, c):
-    """Angulo en el vertice b entre los segmentos b->a y b->c (0..180)."""
+    """Angulo en el vertice b entre los segmentos b->a y b->c (0..180).
+    Se usa identidad producto punto v1 v2 = |v1| |v2| cos(theta) para calcular el angulo theta.
+    """
     v1x, v1y = a.x - b.x, a.y - b.y
     v2x, v2y = c.x - b.x, c.y - b.y
-    mag1 = math.hypot(v1x, v1y)
-    mag2 = math.hypot(v2x, v2y)
+    mag1 = math.hypot(v1x, v1y) # Magnitud del vector v1
+    mag2 = math.hypot(v2x, v2y) # Magnitud del vector v2
     if mag1 < 1e-6 or mag2 < 1e-6:
         return None
     cos_angle = clamp((v1x * v2x + v1y * v2y) / (mag1 * mag2), -1.0, 1.0)
